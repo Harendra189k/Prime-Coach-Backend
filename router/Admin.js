@@ -188,6 +188,7 @@ const generateTempPassword = () => {
     }
    })
 
+   
    // GET ADMIN 
    router.get("/getadmin", async(req, res) => {
     try{
