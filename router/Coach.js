@@ -122,7 +122,7 @@ router.post("/coach-forgotpassword", async (req, res) => {
       }
     });
 
-    res.status(200).send("Email Send SuccessFuly");
+    res.status(200).send("Email Send SuccessFuly...");
   } catch (err) {
     res.status(500).json(err);
   }
