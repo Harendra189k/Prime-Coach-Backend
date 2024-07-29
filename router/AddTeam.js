@@ -1,13 +1,11 @@
 const router = require("express").Router();
 
 const filterByDateRange = require("../helper");
-const AddTeam = require("../models/addTeamSchema")
+const AddTeam = require("../models/addTeamSchema");
 
-
-// Add Team 
+// Add Team
 
 router.post("/addteam", async (req, res) => {
- 
   const { teamName, sportType, coachName } = req.body;
   if (!teamName) {
     return res.status(400).json({ error: "Please provide TeamName" });
@@ -18,12 +16,11 @@ router.post("/addteam", async (req, res) => {
   if (!coachName) {
     return res.status(400).json({ error: "Please provide CoachName." });
   }
-  
 
   try {
     const { error } = AddTeam.validate({ teamName, sportType, coachName });
     if (error) {
-      return res.status(400).json({ error: error.details[0].message,});
+      return res.status(400).json({ error: error.details[0].message });
     }
   } catch (err) {
     return res.status(400).json({ error: err.message });
@@ -32,29 +29,28 @@ router.post("/addteam", async (req, res) => {
   const newMessage = new AddTeam({
     teamName,
     sportType,
-    coachName
+    coachName,
   });
 
   try {
     const savedMessage = await newMessage.save();
-    res.status(201).json({savedMessage, status:200});
+    res.status(201).json({ savedMessage, status: 200 });
   } catch (err) {
     res.status(500).json(err);
   }
 });
 
 // GET TEAM
-router.get("/getteams", async(req, res) => {
-  try{
-    const teams = await AddTeam.find()
-    res.status(200).json(teams)
-  } 
-  catch(err){
-    res.status(500).json(err)
+router.get("/getteams", async (req, res) => {
+  try {
+    const teams = await AddTeam.find();
+    res.status(200).json(teams);
+  } catch (err) {
+    res.status(500).json(err);
   }
-})
+});
 
-// UPDATE TEAM 
+// UPDATE TEAM
 router.put("/update-team", async (req, res) => {
   try {
     await AddTeam.findOneAndUpdate(
@@ -64,12 +60,10 @@ router.put("/update-team", async (req, res) => {
       {
         teamName: req.body.teamName,
         sportType: req.body.sportType,
-        coachName: req.body.coachName
+        coachName: req.body.coachName,
       }
     );
-    res
-      .status(200)
-      .json({ message: "Team Updated SuccessFully", status: 200 });
+    res.status(200).json({ message: "Team Updated SuccessFully", status: 200 });
   } catch (err) {
     res.status(500).json(err);
   }
@@ -80,7 +74,8 @@ router.delete("/delete-team/:id", async (req, res) => {
   try {
     await AddTeam.findOneAndDelete({
       _id: req.params.id,
-    }); res.status(200).json({ message: "Team Deleted SuccessFully", status: 200 });
+    });
+    res.status(200).json({ message: "Team Deleted SuccessFully", status: 200 });
   } catch (err) {
     res.status(500).json(err);
   }
@@ -93,7 +88,7 @@ router.put("/update-team-status", async (req, res) => {
         _id: req.body._id,
       },
       {
-        status: req.body.status
+        status: req.body.status,
       }
     );
     res
@@ -114,18 +109,15 @@ router.get("/filter-teams", async (req, res) => {
     //   return res.status(400).json({ error: "Please provide both startDate and endDate query parameters." });
     // }
 
-    const createdAt = filterByDateRange(startDate, endDate)
-    const teams = await AddTeam.find(
-       {
-        createdAt:createdAt
-      }
-    );
+    const createdAt = filterByDateRange(startDate, endDate);
+    const teams = await AddTeam.find({
+      createdAt: createdAt,
+    });
 
     res.status(200).json(teams);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
-
 
 module.exports = router;
