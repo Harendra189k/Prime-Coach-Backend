@@ -187,7 +187,9 @@ router.post("/athlete-resetpassword", async (req, res) => {
 // GET ATHLETE
 router.get("/getathlete", async(req, res) => {
   try{
-    const ath = await Athlete.find()
+    const ath = await Athlete.find(
+      
+    ).sort({createdAt:-1})
     res.status(200).json(ath)
   } 
   catch(err){
@@ -210,7 +212,7 @@ router.put("/update-athlete", async (req, res) => {
         height: req.body.height,
         weight: req.body.weight,
         membershipType: req.body.membershipType,
-        membershipDate: req.body.weimembershipDateght,
+        membershipDate: req.body.membershipDate,
         password:
           req.body.password &&
           CryptoJS.AES.encrypt(
@@ -268,6 +270,10 @@ router.get("/filter-athlete", async (req, res) => {
     // if (!startDate || !endDate) {
     //   return res.status(400).json({ error: "Please provide both startDate and endDate query parameters." });
     // }
+
+     if (!startDate) {
+      return res.status(200).json({ error: "Please provide  startDate", success:false });
+     }
 
     const createdAt = filterByDateRange(startDate, endDate)
     const athlete = await Athlete.find(

@@ -50,7 +50,9 @@ router.post("/addplayer", async (req, res) => {
 // GET PALYER
 router.get("/getplayer", async(req, res) => {
   try{
-    const teams = await AddPlayer.find()
+    const teams = await AddPlayer.find(
+
+    ).sort({createdAt:-1})
     res.status(200).json(teams)
   } 
   catch(err){

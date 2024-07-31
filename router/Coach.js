@@ -187,7 +187,9 @@ router.post("/coach-resetpassword", async (req, res) => {
 
 router.get("/getcoach", async (req, res) => {
   try {
-    const teams = await Coach.find();
+    const teams = await Coach.find(
+
+    ).sort({createdAt:-1});
     res.status(200).json(teams);
   } catch (err) {
     res.status(500).json(err);

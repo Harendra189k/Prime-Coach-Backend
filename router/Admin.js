@@ -254,10 +254,10 @@ router.put("/update-admin", async (req, res) => {
 
 router.put("/change-admin-password", async (req, res) => {
   try {
-    const adminData = await Admin.findOne({ email: req.body.email });
-    if (!adminData) {
-      return res.status(404).json({ message: "Admin not found" });
-    }
+    const adminData = await Admin.findOne();
+    // if (!adminData) {
+    //   return res.status(404).json({ message: "Admin not found" });
+    // }
     const storedEncryptedPassword = adminData.password;
     const bytes = CryptoJS.AES.decrypt(
       storedEncryptedPassword,
