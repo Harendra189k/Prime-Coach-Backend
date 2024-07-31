@@ -4,15 +4,15 @@ const Coach = require("../models/coachSchema");
 const CryptoJS = require("crypto-js");
 const nodemailer = require("nodemailer");
 const filterByDateRange = require("../helper");
-require('dotenv').config();
+require("dotenv").config();
+
 // Coach SignUP
 
 router.post("/coachsign", async (req, res) => {
   try {
-
-    const coach = await Coach.findOne({ email:req.body.email });
-    if(coach){
-      return res.status(409).json({ message: "Email Already Exit."});
+    const coach = await Coach.findOne({ email: req.body.email });
+    if (coach) {
+      return res.status(409).json({ message: "Email Already Exits." });
     }
 
     const newCoach = new Coach({
@@ -39,6 +39,7 @@ router.post("/coachsign", async (req, res) => {
 
 router.post("/coachlogin", async (req, res) => {
   const { email, password } = req.body;
+  
 
   try {
     const coach = await Coach.findOne({ email });
@@ -59,7 +60,6 @@ router.post("/coachlogin", async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "20d" }
     );
-    console.log(" Coach Login Token ====>>", token);
 
     res.status(200).json({
       message: "Login successful.",
@@ -187,9 +187,7 @@ router.post("/coach-resetpassword", async (req, res) => {
 
 router.get("/getcoach", async (req, res) => {
   try {
-    const teams = await Coach.find(
-
-    ).sort({createdAt:-1});
+    const teams = await Coach.find().sort({ createdAt: -1 });
     res.status(200).json(teams);
   } catch (err) {
     res.status(500).json(err);
@@ -229,7 +227,10 @@ router.delete("/delete-coach/:id", async (req, res) => {
   try {
     await Coach.findOneAndDelete({
       _id: req.params.id,
-    }); res.status(200).json({ message: "Coach Deleted SuccessFully", status: 200 });
+    });
+    res
+      .status(200)
+      .json({ message: "Coach Deleted SuccessFully", status: 200 });
   } catch (err) {
     res.status(500).json(err);
   }
@@ -244,7 +245,7 @@ router.put("/update-status", async (req, res) => {
         _id: req.body._id,
       },
       {
-        status: req.body.status
+        status: req.body.status,
       }
     );
     res
@@ -255,30 +256,25 @@ router.put("/update-status", async (req, res) => {
   }
 });
 
-
 // FILTER COACH WITH DATE
 
 router.get("/filter-coach", async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
 
-    // if (!startDate || !endDate) {
-    //   return res.status(400).json({ error: "Please provide both startDate and endDate query parameters." });
+    // if (!startDate) {
+    //   return res.status(400).json({ error: "Please provide startDate" });
     // }
 
-    const createdAt = filterByDateRange(startDate, endDate)
-    const coach = await Coach.find(
-       {
-        createdAt:createdAt
-      }
-    );
-    
+    const createdAt = filterByDateRange(startDate, endDate);
+    const coach = await Coach.find({
+      createdAt: createdAt,
+    });
+
     res.status(200).json(coach);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
-
-
 
 module.exports = router;

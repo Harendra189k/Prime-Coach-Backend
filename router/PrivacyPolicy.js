@@ -71,19 +71,20 @@ router.put("/update-privacy-policy", async (req, res) => {
   });
 
 
-  // FILTER TEAM WITH DATE
+  // FILTER PRIVACY POLICY WITH DATE
 
 router.get("/filter-static-content", async (req, res) => {
     try {
       const { startDate, endDate } = req.query;
   
-      // if (!startDate || !endDate) {
-      //   return res.status(400).json({ error: "Please provide both startDate and endDate query parameters." });
-      // }
-  
+      if (!startDate) {
+        return res.status(400).json({ error: "Please provide startDate" });
+      }
+
       const createdAt = filterByDateRange(startDate, endDate)
+      
       const staticContent = await privacyPolicySchema.find(
-         {
+        {
           createdAt:createdAt
         }
       );
@@ -93,6 +94,8 @@ router.get("/filter-static-content", async (req, res) => {
       res.status(500).json({ error: err.message });
     }
   });
+
   
+
 
 module.exports = router;

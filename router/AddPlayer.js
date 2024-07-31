@@ -120,7 +120,7 @@ router.get("/filter-players", async (req, res) => {
     const { startDate, endDate } = req.query;
 
     // if (!startDate || !endDate) {
-    //   return res.status(400).json({ error: "Please provide both startDate and endDate query parameters." });
+    //   return res.status(400).json({ error: "Please provide both startDate and endDate" });
     // }
 
     const createdAt = filterByDateRange(startDate, endDate)
