@@ -6,10 +6,34 @@ const nodemailer = require("nodemailer");
 const filterByDateRange = require("../helper");
 require("dotenv").config();
 
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+
 // Coach SignUP
 
 router.post("/coachsign", async (req, res) => {
   try {
+    const {firstName, lastName, email, phone, password} = req.body
+
+    if(!firstName || !lastName || !email || !phone || !password){
+      return res.status(403).json({error: "Please Enter all Fields"})
+    }
+
+    const cleanedPhone = phone.trim();
+    if (cleanedPhone.length !== 10 || !/^\d+$/.test(cleanedPhone)) {
+        return res.status(403).json({ error: "Phone number must be exactly 10 digits" });
+    }
+    
+     if(!emailRegex.test(email)){
+      return res.status(403).json({error: "Invalid Email"})
+     }
+
+     if(!passwordRegex.test(password)){
+      return res.status(403).json({error: "Password must be 8 charecters and must contain a Upper case, Lower case, Symbol and a Number"})
+     }
+
+
     const coach = await Coach.findOne({ email: req.body.email });
     if (coach) {
       return res.status(409).json({ message: "Email Already Exits." });
@@ -38,24 +62,24 @@ router.post("/coachsign", async (req, res) => {
 //COACH LOGIN
 
 router.post("/coachlogin", async (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ error: 'Email and password are required' });
-  }
-
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return res.status(400).json({ error: 'Invalid email format' });
-  }
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-  if (!passwordRegex.test(password)) {
-    return res.status(400).json({
-      error: 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character'
-    });
-  }
   
   try {
+    const { email, password } = req.body;
+  
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+  
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        error: 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character'
+      });
+    }
     const coach = await Coach.findOne({ email });
 
     if (!coach) {

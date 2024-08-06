@@ -14,6 +14,23 @@ const addPlayerSchema = require("../models/addPlayerSchema");
 
 router.post("/adminlist", async (req, res) => {
   try {
+    const {firstName, lastName, email, password} = req.body
+
+    if(!firstName || !lastName || !email || !password){
+      return res.status(403).json({error: "Please Enter all Fields"})
+    }
+    
+     let regex_email = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+     if(!regex_email.test(email)){
+      return res.status(403).json({error: "Invalid Email"})
+     }
+
+     let password_regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/
+     if(!password_regex.test(password)){
+      return res.status(403).json({error: "Password must be 8 charecters and must contain a Upper case, Lower case, Symbol and a Number"})
+     }
+
+    
     const newAdmin = new Admin({
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -82,6 +99,7 @@ router.post("/adminlogin", async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
 
 // Admin FORGOT PASSWORD
 
